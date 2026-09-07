@@ -13,6 +13,11 @@ app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
 
+app.use((req, res, next) => {
+  console.log(req.headers["user-agent"]);
+  next();
+});
+
 app.get("/", (req, res) => {
   res.json({ message: "Hello Express Server 👋" });
 });
