@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -14,9 +16,20 @@ function App() {
         credentials: "include",
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+
       const json = await response.json();
 
       setData(json);
+
+      try {
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     getData();
@@ -25,7 +38,16 @@ function App() {
   return (
     <>
       <h1>Hello Kanki 😊</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {loading ? (
+        <>
+          <p>読み込み中...</p>
+          <div className="spinner" />
+        </>
+      ) : error ? (
+        <p>エラーが発生しました: {error}</p>
+      ) : (
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      )}
     </>
   );
 }
